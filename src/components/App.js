@@ -4,17 +4,34 @@ import { ContactsList } from './Contacts/Contacts.list';
 import { Filter } from './Filter/Filter';
 import { GlobalStyle } from './GlobalStyle';
 import { Layout } from './Layout/Layout';
+import InitialContact from './InitialContacts.json';
 
 export class App extends Component {
   state = {
-    contacts: [
-      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-      { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-      { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-      { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-    ],
+    contacts: [],
     filter: '',
   };
+  componentDidMount() {
+    // console.log('componentDidMount');
+    const savedContacts = localStorage.getItem('contacts');
+    if (savedContacts !== null) {
+      this.setState({
+        contacts: JSON.parse(savedContacts),
+      });
+    } else {
+      this.setState({
+        contacts: InitialContact,
+      });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    // console.log('componentDidUpdate');
+    if (prevState.contacts !== this.state.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  }
+
   addContacts = newContacts => {
     const newContactsLowercase = newContacts.name.toLowerCase();
     const findContact = this.state.contacts.find(
@@ -44,6 +61,7 @@ export class App extends Component {
     }));
   };
   render = () => {
+    // console.log('render');
     return (
       <Layout>
         <GlobalStyle />
